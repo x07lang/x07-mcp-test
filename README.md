@@ -20,6 +20,12 @@ Week 1 scope is repo skeleton + CLI dispatch. Most commands are stubs until late
 - `trust verify`
 - `bundle verify`
 
+## Install (alpha)
+
+Release artifacts are built via GitHub Actions on tags like `v0.1.*-alpha*`.
+
+On Windows, run inside WSL2 and use the `linux-x64` artifact.
+
 ## Schemas
 
 Week 1 freezes report schema naming and the shared envelope fields:

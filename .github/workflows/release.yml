@@ -1,0 +1,118 @@
+name: Release (alpha skeleton)
+
+on:
+  push:
+    tags:
+      - "v0.1.*-alpha*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag to build artifacts for (example: v0.1.0-alpha.0)"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+env:
+  X07_TOOLCHAIN_TAG: "v0.1.106"
+
+jobs:
+  build:
+    name: release / build (${{ matrix.platform }})
+    runs-on: ${{ matrix.runs_on }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: linux-x64
+            runs_on: ubuntu-latest
+          - platform: darwin-arm64
+            runs_on: macos-latest
+          - platform: darwin-x64
+            runs_on: macos-13
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Cache X07 toolchain
+        uses: actions/cache@v4
+        with:
+          path: ~/.x07
+          key: x07-${{ runner.os }}-${{ env.X07_TOOLCHAIN_TAG }}
+
+      - name: Install X07 (pinned)
+        shell: bash
+        run: ./scripts/ci/install_x07_toolchain.sh
+
+      - name: Build release artifact
+        shell: bash
+        env:
+          X07_MCP_TEST_TAG: ${{ inputs.tag || github.ref_name }}
+        run: ./scripts/ci/build_release_binaries.sh
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: x07-mcp-test-${{ inputs.tag || github.ref_name }}-${{ matrix.platform }}
+          path: dist/x07-mcp-test-*.tar.gz
+
+  checksums:
+    name: release / checksums
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: dist
+
+      - name: Generate checksums
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p upload
+          find dist -type f -name 'x07-mcp-test-*.tar.gz' -print0 | xargs -0 -I{} cp "{}" upload/
+          cd upload
+          sha256sum x07-mcp-test-*.tar.gz | LC_ALL=C sort > checksums.txt
+          cat checksums.txt
+
+      - name: Upload checksums
+        uses: actions/upload-artifact@v4
+        with:
+          name: x07-mcp-test-${{ inputs.tag || github.ref_name }}-checksums
+          path: upload/checksums.txt
+
+  publish:
+    name: release / publish (draft)
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
+    needs: checksums
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: dist
+
+      - name: Flatten dist/
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p upload
+          find dist -type f -name 'x07-mcp-test-*.tar.gz' -print0 | xargs -0 -I{} cp "{}" upload/
+          checksum_src="$(find dist -type f -name 'checksums.txt' | head -n 1)"
+          cp "${checksum_src}" upload/checksums.txt
+          ls -la upload
+
+      - name: Create draft prerelease
+        uses: softprops/action-gh-release@v2
+        with:
+          draft: true
+          prerelease: true
+          files: |
+            upload/x07-mcp-test-*.tar.gz
+            upload/checksums.txt
+          body: |
+            Private alpha skeleton release for `x07-mcp-test`.
+
+            Windows support is via WSL2; use the `linux-x64` artifact.
