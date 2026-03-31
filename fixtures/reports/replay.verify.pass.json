@@ -1,0 +1,12 @@
+{
+  "schema_version": "x07.mcp.replay.verify@0.1.0",
+  "generated_at": "2026-03-31T00:00:00Z",
+  "tool": "x07-mcp-test",
+  "tool_version": "0.1.0-alpha.0",
+  "target": { "kind": "http", "ref": "http://localhost:3000/mcp" },
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "details": {}
+}
+

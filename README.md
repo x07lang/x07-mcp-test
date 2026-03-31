@@ -19,3 +19,15 @@ Week 1 scope is repo skeleton + CLI dispatch. Most commands are stubs until late
 - `replay verify`
 - `trust verify`
 - `bundle verify`
+
+## Schemas
+
+Week 1 freezes report schema naming and the shared envelope fields:
+
+- `x07.mcp.conformance.summary@0.1.0` (`schemas/x07.mcp.conformance.summary.schema.json`)
+- `x07.mcp.replay.session@0.1.0` (`schemas/x07.mcp.replay.session.schema.json`)
+- `x07.mcp.replay.verify@0.1.0` (`schemas/x07.mcp.replay.verify.schema.json`)
+- `x07.mcp.trust.summary@0.1.0` (`schemas/x07.mcp.trust.summary.schema.json`)
+- `x07.mcp.bundle.verify@0.1.0` (`schemas/x07.mcp.bundle.verify.schema.json`)
+
+Sample fixtures live under `fixtures/reports/` and validate in CI.

@@ -17,3 +17,6 @@ x07 arch check --manifest arch/manifest.x07arch.json >/dev/null
 
 echo "==> cli smoke"
 x07 run --project . --profile os --json=off -- x07-mcp-test --help >/dev/null
+
+echo "==> schema fixtures"
+x07 run --project . --profile os --json=off -- x07-mcp-test ci validate-fixtures
