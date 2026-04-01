@@ -7,6 +7,13 @@ cd "${repo_root}"
 echo "==> repo hygiene"
 python3 scripts/ci/check_repo_hygiene.py >/dev/null
 
+echo "==> node version"
+if ! command -v node >/dev/null 2>&1; then
+  echo "ERROR: node not found (required for conformance fixtures)" >&2
+  exit 1
+fi
+node -e 'const req=[20,18,1]; const got=process.versions.node.split(".").map(n=>parseInt(n,10)); const ok=(got[0]>req[0])||(got[0]===req[0]&&((got[1]>req[1])||(got[1]===req[1]&&got[2]>=req[2]))); if(!ok){console.error(`ERROR: node >=${req.join(".")} required for @modelcontextprotocol/conformance (undici>=7); got ${process.versions.node}`); process.exit(1)}' >/dev/null
+
 echo "==> fmt"
 while IFS= read -r path; do
   x07 fmt --input "${path}" --check --report-json >/dev/null
