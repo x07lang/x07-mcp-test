@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: "Tag to build artifacts for (example: v0.1.0-alpha.0)"
+        description: "Tag to build artifacts for (example: v0.1.0-alpha.1)"
         required: true
         type: string
 
@@ -84,7 +84,7 @@ jobs:
           path: upload/checksums.txt
 
   publish:
-    name: release / publish (draft)
+    name: release / publish (prerelease)
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
     needs: checksums
     runs-on: ubuntu-latest
@@ -104,10 +104,10 @@ jobs:
           cp "${checksum_src}" upload/checksums.txt
           ls -la upload
 
-      - name: Create draft prerelease
+      - name: Create prerelease
         uses: softprops/action-gh-release@v2
         with:
-          draft: true
+          draft: false
           prerelease: true
           files: |
             upload/x07-mcp-test-*.tar.gz
