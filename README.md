@@ -10,6 +10,9 @@ Week 1 scope is repo skeleton + CLI dispatch. Most commands are stubs until late
 
 - `x07-mcp-test --help`
 - `x07-mcp-test doctor`
+- `x07-mcp-test doctor --machine json --cmd "<stdio cmd>" --url "<http url>"`
+
+See `docs/doctor.md`.
 
 ## Commands (M1 contract)
 
