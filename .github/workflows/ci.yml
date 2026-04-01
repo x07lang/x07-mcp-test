@@ -108,8 +108,9 @@ jobs:
             nodejs
             npm
 
-      - name: Install X07 (pinned)
-        run: ./scripts/ci/install_x07_toolchain.sh
-
-      - name: Check
-        run: ./scripts/ci/check_all.sh
+      - name: Install X07 + Check
+        run: |
+          set -euo pipefail
+          export X07_TOOLCHAIN_TAG="${{ env.X07_TOOLCHAIN_TAG }}"
+          ./scripts/ci/install_x07_toolchain.sh
+          ./scripts/ci/check_all.sh
