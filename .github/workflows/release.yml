@@ -30,7 +30,7 @@ jobs:
           - platform: darwin-arm64
             runs_on: macos-latest
           - platform: darwin-x64
-            runs_on: macos-13
+            runs_on: macos-15-intel
     steps:
       - name: Checkout
         uses: actions/checkout@v4
