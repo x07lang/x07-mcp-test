@@ -102,6 +102,11 @@ run_conformance_fixture() (
 
   if [[ "${exit_code}" != "${expected_exit}" ]]; then
     echo "ERROR: conformance run exit code mismatch for ${fixture_id} (expected ${expected_exit}, got ${exit_code})" >&2
+    if [[ -f "${fixture_out_dir}/summary.stdout.json" ]]; then
+      echo "---- begin conformance stdout ----" >&2
+      cat "${fixture_out_dir}/summary.stdout.json" >&2 || true
+      echo "---- end conformance stdout ----" >&2
+    fi
     tail -n 200 "${server_log}" >&2 || true
     exit 1
   fi

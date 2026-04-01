@@ -44,6 +44,14 @@ if ! command -v cc >/dev/null 2>&1; then
   exit 2
 fi
 
+echo "==> pkg lock (hydrate + check)"
+lock_log="${work_dir}/pkg.lock.log"
+if ! x07 pkg lock --project x07.json --check --json=off >"${lock_log}" 2>&1; then
+  echo "ERROR: x07 pkg lock failed." >&2
+  cat "${lock_log}" >&2 || true
+  exit 1
+fi
+
 echo "==> bundle ${bin_name} (${artifact_platform})"
 bundle_log="${work_dir}/bundle.log"
 if ! x07 bundle --project x07.json --profile os --json=off --out "${bin_path}" >"${bundle_log}" 2>&1; then
