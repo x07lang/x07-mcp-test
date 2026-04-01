@@ -22,7 +22,11 @@ jobs:
         run: |
           set -euo pipefail
           sudo apt-get update
-          sudo apt-get install -y build-essential
+          sudo apt-get install -y --no-install-recommends \
+            build-essential \
+            pkg-config \
+            libssl-dev \
+            libcurl4-openssl-dev
           cc --version
       - name: Setup Node
         uses: actions/setup-node@v4

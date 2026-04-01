@@ -1,0 +1,25 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.x07/mcptest-trust-good",
+  "version": "0.1.0",
+  "description": "Known-good server.json fixture for x07-mcp-test trust and bundle verification.",
+  "packages": [
+    {
+      "registryType": "mcpb",
+      "identifier": "io.x07/mcptest-trust-good",
+      "version": "0.1.0",
+      "fileSha256": "aa6921f85e0d8cbd33793ec047ede1030583e1bd46517de5852a02d14339d1d5",
+      "transport": { "type": "stdio" }
+    }
+  ],
+  "_meta": {
+    "io.modelcontextprotocol.registry/publisher-provided": {
+      "x07": {
+        "trustFrameworkSha256": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+        "trustLockSha256": "89abcdef0123456789abcdef0123456789abcdef0123456789abcdef01234567",
+        "requireSignedPrm": true,
+        "asSelectionStrategy": "prefer_order_v1"
+      }
+    }
+  }
+}

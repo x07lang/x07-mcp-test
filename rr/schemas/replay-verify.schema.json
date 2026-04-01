@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://x07.io/schemas/x07.mcp.replay.verify.schema.json",
+  "title": "x07.mcp.replay.verify@0.1.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "generated_at",
+    "tool",
+    "tool_version",
+    "target",
+    "ok",
+    "errors",
+    "warnings",
+    "details"
+  ],
+  "properties": {
+    "schema_version": { "const": "x07.mcp.replay.verify@0.1.0" },
+    "generated_at": { "type": "string", "format": "date-time" },
+    "tool": { "type": "string", "minLength": 1 },
+    "tool_version": { "type": "string", "minLength": 1 },
+    "target": { "$ref": "#/$defs/target" },
+    "ok": { "type": "boolean" },
+    "errors": { "type": "array", "items": { "$ref": "#/$defs/msg" } },
+    "warnings": { "type": "array", "items": { "$ref": "#/$defs/msg" } },
+    "details": { "$ref": "#/$defs/details" }
+  },
+  "$defs": {
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "ref"],
+      "properties": {
+        "kind": { "type": "string", "minLength": 1 },
+        "ref": { "type": "string", "minLength": 1 },
+        "meta": { "type": "object", "additionalProperties": true }
+      }
+    },
+    "msg": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "message"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "message": { "type": "string", "minLength": 1 },
+        "details": { "type": "object", "additionalProperties": true }
+      }
+    },
+    "details": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["session"],
+      "properties": { "session": { "type": "string", "minLength": 1 } }
+    }
+  }
+}
+

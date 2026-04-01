@@ -1,0 +1,2 @@
+PK x07-mcp-test bundle fixture (bad)
+This file intentionally differs from bundle-good.mcpb to trigger sha mismatch detection.

@@ -15,7 +15,8 @@ x07 pkg lock --project x07.json --check --json=off >/dev/null
 echo "==> arch check"
 x07 arch check --manifest arch/manifest.x07arch.json >/dev/null
 
-tmp_dir="$(mktemp -d)"
+mkdir -p out
+tmp_dir="$(mktemp -d "out/ci-tmp.XXXXXX")"
 trap 'rm -rf "${tmp_dir}"' EXIT
 
 bin_path="${tmp_dir}/x07-mcp-test"
@@ -123,3 +124,160 @@ run_conformance_fixture() (
 run_conformance_fixture good-http noauth http://127.0.0.1:18080/mcp 0
 run_conformance_fixture auth-http oauth http://127.0.0.1:18081/mcp 1
 run_conformance_fixture broken-http noauth http://127.0.0.1:18082/mcp 1
+
+echo "==> replay fixtures"
+
+record_session="${tmp_dir}/replay.session.json"
+rm -f "${record_session}"
+
+run_replay_good() (
+  local verify_out_dir="${tmp_dir}/replay-verify"
+  rm -rf "${verify_out_dir}"
+  mkdir -p "${verify_out_dir}"
+
+  local good_log="${tmp_dir}/replay.good-http.server.log"
+  conformance/scripts/spawn_reference_http.sh good-http noauth >"${good_log}" 2>&1 &
+  local good_pid="$!"
+
+  cleanup() {
+    kill "${good_pid}" >/dev/null 2>&1 || true
+    wait "${good_pid}" >/dev/null 2>&1 || true
+  }
+  trap cleanup EXIT
+
+  if ! conformance/scripts/wait_for_http.sh http://127.0.0.1:18080/mcp >/dev/null; then
+    echo "ERROR: good-http fixture failed to start for replay" >&2
+    tail -n 200 "${good_log}" >&2 || true
+    exit 1
+  fi
+
+  "${bin_path}" replay record \
+    --url http://127.0.0.1:18080/mcp \
+    --scenario smoke/basic \
+    --sanitize auth,token \
+    --auth-bearer test-token \
+    --out "${record_session}" \
+    --machine json >"${tmp_dir}/replay.record.stdout.json"
+
+  test -s "${record_session}"
+  "${bin_path}" ci validate-json \
+    --schema schemas/x07.mcp.replay.session.schema.json \
+    --input "${record_session}"
+
+  "${bin_path}" replay verify \
+    --session "${record_session}" \
+    --url http://127.0.0.1:18080/mcp \
+    --out "${verify_out_dir}" \
+    --machine json >"${tmp_dir}/replay.verify.good.stdout.json"
+
+  test -s "${verify_out_dir}/verify.json"
+  "${bin_path}" ci validate-json \
+    --schema schemas/x07.mcp.replay.verify.schema.json \
+    --input "${verify_out_dir}/verify.json"
+)
+
+run_replay_broken() (
+  local broken_log="${tmp_dir}/replay.broken-http.server.log"
+  conformance/scripts/spawn_reference_http.sh broken-http noauth >"${broken_log}" 2>&1 &
+  local broken_pid="$!"
+
+  cleanup() {
+    kill "${broken_pid}" >/dev/null 2>&1 || true
+    wait "${broken_pid}" >/dev/null 2>&1 || true
+  }
+  trap cleanup EXIT
+
+  if ! conformance/scripts/wait_for_http.sh http://127.0.0.1:18082/mcp >/dev/null; then
+    echo "ERROR: broken-http fixture failed to start for replay" >&2
+    tail -n 200 "${broken_log}" >&2 || true
+    exit 1
+  fi
+
+  set +e
+  "${bin_path}" replay verify \
+    --session "${record_session}" \
+    --url http://127.0.0.1:18082/mcp \
+    --machine json >"${tmp_dir}/replay.verify.broken.stdout.json"
+  local broken_exit="$?"
+  set -e
+  if [[ "${broken_exit}" != "1" ]]; then
+    echo "ERROR: expected replay verify to fail against broken-http (exit 1), got ${broken_exit}" >&2
+    cat "${tmp_dir}/replay.verify.broken.stdout.json" >&2 || true
+    tail -n 200 "${broken_log}" >&2 || true
+    exit 1
+  fi
+
+  test -s "${tmp_dir}/replay.verify.broken.stdout.json"
+  "${bin_path}" ci validate-json \
+    --schema schemas/x07.mcp.replay.verify.schema.json \
+    --input "${tmp_dir}/replay.verify.broken.stdout.json"
+)
+
+run_replay_good
+run_replay_broken
+
+echo "==> trust fixtures"
+
+trust_good_out="${tmp_dir}/trust.good.json"
+"${bin_path}" trust verify \
+  --server-json trust/fixtures/server-good.json \
+  --out "${trust_good_out}" \
+  --machine json >"${tmp_dir}/trust.good.stdout.json"
+
+test -s "${trust_good_out}"
+"${bin_path}" ci validate-json \
+  --schema schemas/x07.mcp.trust.summary.schema.json \
+  --input "${trust_good_out}"
+
+trust_bad_out="${tmp_dir}/trust.bad.json"
+set +e
+"${bin_path}" trust verify \
+  --server-json trust/fixtures/server-bad.json \
+  --out "${trust_bad_out}" \
+  --machine json >"${tmp_dir}/trust.bad.stdout.json"
+trust_bad_exit="$?"
+set -e
+if [[ "${trust_bad_exit}" != "1" ]]; then
+  echo "ERROR: expected trust verify to fail for degraded fixture (exit 1), got ${trust_bad_exit}" >&2
+  cat "${tmp_dir}/trust.bad.stdout.json" >&2 || true
+  exit 1
+fi
+
+test -s "${trust_bad_out}"
+"${bin_path}" ci validate-json \
+  --schema schemas/x07.mcp.trust.summary.schema.json \
+  --input "${trust_bad_out}"
+
+echo "==> bundle fixtures"
+
+bundle_good_out="${tmp_dir}/bundle.good.json"
+"${bin_path}" bundle verify \
+  --server-json trust/fixtures/server-good.json \
+  --mcpb trust/fixtures/bundle-good.mcpb \
+  --out "${bundle_good_out}" \
+  --machine json >"${tmp_dir}/bundle.good.stdout.json"
+
+test -s "${bundle_good_out}"
+"${bin_path}" ci validate-json \
+  --schema schemas/x07.mcp.bundle.verify.schema.json \
+  --input "${bundle_good_out}"
+
+bundle_bad_out="${tmp_dir}/bundle.bad.json"
+set +e
+"${bin_path}" bundle verify \
+  --server-json trust/fixtures/server-good.json \
+  --mcpb trust/fixtures/bundle-bad.mcpb \
+  --out "${bundle_bad_out}" \
+  --machine json >"${tmp_dir}/bundle.bad.stdout.json"
+bundle_bad_exit="$?"
+set -e
+if [[ "${bundle_bad_exit}" != "1" ]]; then
+  echo "ERROR: expected bundle verify to fail for sha mismatch (exit 1), got ${bundle_bad_exit}" >&2
+  cat "${tmp_dir}/bundle.bad.stdout.json" >&2 || true
+  exit 1
+fi
+
+test -s "${bundle_bad_out}"
+"${bin_path}" ci validate-json \
+  --schema schemas/x07.mcp.bundle.verify.schema.json \
+  --input "${bundle_bad_out}"
