@@ -4,6 +4,9 @@ set -euo pipefail
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "${repo_root}"
 
+echo "==> repo hygiene"
+python3 scripts/ci/check_repo_hygiene.py >/dev/null
+
 echo "==> fmt"
 while IFS= read -r path; do
   x07 fmt --input "${path}" --check --report-json >/dev/null

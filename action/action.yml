@@ -3,7 +3,7 @@ description: Run MCP conformance checks using the x07-mcp-test alpha release bin
 
 inputs:
   url:
-    description: MCP server base URL (example: http://127.0.0.1:3000/mcp)
+    description: "MCP server base URL (example: http://127.0.0.1:3000/mcp)"
     required: true
   full-suite:
     description: Run the full official conformance suite (default false)
@@ -14,7 +14,7 @@ inputs:
     required: false
     default: ""
   version:
-    description: x07-mcp-test release tag (example: v0.1.0-alpha.4) or latest-alpha
+    description: "x07-mcp-test release tag (example: v0.1.0-alpha.4) or latest-alpha"
     required: false
     default: latest-alpha
 
