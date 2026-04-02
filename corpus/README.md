@@ -27,7 +27,7 @@ Each `targets[]` entry captures:
 - `<DIR>/<server_id>/summary.json` (`x07.mcp.conformance.summary@0.2.0`)
 - `<DIR>/<server_id>/summary.junit.xml`
 - `<DIR>/<server_id>/summary.html`
-- `<DIR>/<server_id>/summary.sarif.json` (`x07.mcp.sarif@0.1.0`, stub until SARIF renderer ships)
+- `<DIR>/<server_id>/summary.sarif.json` (`x07.mcp.sarif@0.1.0`)
 
 ## Exclusions
 

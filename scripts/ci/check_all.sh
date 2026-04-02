@@ -194,6 +194,10 @@ run_conformance_fixture() (
   test -s "${fixture_out_dir}/summary.junit.xml"
   python3 scripts/ci/assert_junit_xml.py "${fixture_out_dir}/summary.junit.xml"
   test -s "${fixture_out_dir}/summary.html"
+  test -s "${fixture_out_dir}/summary.sarif.json"
+  "${bin_path}" ci validate-json \
+    --schema schemas/x07.mcp.sarif.schema.json \
+    --input "${fixture_out_dir}/summary.sarif.json"
 )
 
 run_conformance_fixture good-http noauth http://127.0.0.1:18080/mcp 0
@@ -235,6 +239,10 @@ run_conformance_stdio_fixture() (
   test -s "${fixture_out_dir}/summary.junit.xml"
   python3 scripts/ci/assert_junit_xml.py "${fixture_out_dir}/summary.junit.xml"
   test -s "${fixture_out_dir}/summary.html"
+  test -s "${fixture_out_dir}/summary.sarif.json"
+  "${bin_path}" ci validate-json \
+    --schema schemas/x07.mcp.sarif.schema.json \
+    --input "${fixture_out_dir}/summary.sarif.json"
 )
 
 run_conformance_stdio_fixture good-stdio good-stdio 0

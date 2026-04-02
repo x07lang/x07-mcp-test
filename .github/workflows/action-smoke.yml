@@ -36,6 +36,7 @@ jobs:
         with:
           url: http://127.0.0.1:18080/mcp
           full-suite: "false"
+          sarif: "true"
           version: latest-alpha
 
       - name: Upload reports
@@ -48,6 +49,7 @@ jobs:
             out/conformance/summary.json
             out/conformance/summary.junit.xml
             out/conformance/summary.html
+            out/conformance/summary.sarif.json
             out/conformance/summary.stdout.json
             out/action-smoke.server.log
 

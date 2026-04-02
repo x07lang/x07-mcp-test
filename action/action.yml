@@ -27,7 +27,7 @@ inputs:
     required: false
     default: ""
   sarif:
-    description: Emit a stub SARIF report file (default false)
+    description: Emit a SARIF report file (default false)
     required: false
     default: "false"
   version:
@@ -146,18 +146,10 @@ runs:
         sarif_report=""
         if [[ "${{ inputs.sarif }}" == "true" ]]; then
           sarif_report="${out_dir}/summary.sarif.json"
-          cat >"${sarif_report}" <<'EOF'
-        {
-          "$schema": "https://json.schemastore.org/sarif-2.1.0.json",
-          "version": "2.1.0",
-          "runs": [
-            {
-              "tool": { "driver": { "name": "x07-mcp-test" } },
-              "results": []
-            }
-          ]
-        }
-EOF
+          if [[ ! -s "${sarif_report}" ]]; then
+            echo "ERROR: missing SARIF report: ${sarif_report}" >&2
+            exit 2
+          fi
         fi
         echo "sarif_report=${sarif_report}" >>"${GITHUB_OUTPUT}"
 

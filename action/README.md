@@ -29,6 +29,7 @@ jobs:
         with:
           url: http://127.0.0.1:3000/mcp
           full-suite: "false"
+          sarif: "true"
 
       - name: Upload reports
         if: always()
@@ -40,6 +41,7 @@ jobs:
             out/conformance/summary.json
             out/conformance/summary.junit.xml
             out/conformance/summary.html
+            out/conformance/summary.sarif.json
 ```
 
 ### stdio target
@@ -78,7 +80,19 @@ jobs:
 
 - The official conformance suite runs via `npx`, so Node/npm/npx must be available on the runner.
 - Windows is supported via WSL2; this Action currently targets Linux/macOS runners.
-- `sarif=true` currently emits a stub SARIF file (schema/shape is frozen; renderer is not implemented yet).
+
+## Upload SARIF (optional)
+
+```yaml
+permissions:
+  security-events: write
+
+- name: Upload SARIF to code scanning
+  if: always() && steps.mcp.outputs.sarif_report != ''
+  uses: github/codeql-action/upload-sarif@v3
+  with:
+    sarif_file: ${{ steps.mcp.outputs.sarif_report }}
+```
 
 ## PR summary snippet
 

@@ -1,6 +1,6 @@
 # x07-mcp-test
 
-Private-alpha MCP verifier CLI (Track A wedge): run official MCP conformance plus replay/trust/bundle checks, and emit reviewable artifacts (terminal + JSON + JUnit + HTML).
+Private-alpha MCP verifier CLI (Track A wedge): run official MCP conformance plus replay/trust/bundle checks, and emit reviewable artifacts (terminal + JSON + JUnit + HTML + SARIF).
 
 ## Who it's for
 
@@ -108,6 +108,7 @@ See `docs/schema-versioning.md`.
 - `summary.json` (schema: `x07.mcp.conformance.summary@0.2.0`)
 - `summary.junit.xml`
 - `summary.html`
+- `summary.sarif.json` (SARIF 2.1.0)
 
 Exit codes:
 - `0` all required scenarios passed
