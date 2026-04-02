@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://x07.io/schemas/x07.mcp.replay.verify.schema.json",
-  "title": "x07.mcp.replay.verify@0.1.0",
+  "title": "x07.mcp.replay.verify@0.2.0",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -12,11 +12,10 @@
     "target",
     "ok",
     "errors",
-    "warnings",
-    "details"
+    "warnings"
   ],
   "properties": {
-    "schema_version": { "const": "x07.mcp.replay.verify@0.1.0" },
+    "schema_version": { "const": "x07.mcp.replay.verify@0.2.0" },
     "generated_at": { "type": "string", "format": "date-time" },
     "tool": { "type": "string", "minLength": 1 },
     "tool_version": { "type": "string", "minLength": 1 },
@@ -24,15 +23,16 @@
     "ok": { "type": "boolean" },
     "errors": { "type": "array", "items": { "$ref": "#/$defs/msg" } },
     "warnings": { "type": "array", "items": { "$ref": "#/$defs/msg" } },
-    "details": { "$ref": "#/$defs/details" }
+    "details": { "type": "object", "additionalProperties": true }
   },
   "$defs": {
     "target": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["kind", "ref"],
+      "required": ["kind", "transport", "ref", "meta"],
       "properties": {
-        "kind": { "type": "string", "minLength": 1 },
+        "kind": { "enum": ["mcp_server", "file"] },
+        "transport": { "enum": ["streamable_http", "stdio", "file"] },
         "ref": { "type": "string", "minLength": 1 },
         "meta": { "type": "object", "additionalProperties": true }
       }
@@ -46,13 +46,6 @@
         "message": { "type": "string", "minLength": 1 },
         "details": { "type": "object", "additionalProperties": true }
       }
-    },
-    "details": {
-      "type": "object",
-      "additionalProperties": true,
-      "required": ["session"],
-      "properties": { "session": { "type": "string", "minLength": 1 } }
     }
   }
 }
-

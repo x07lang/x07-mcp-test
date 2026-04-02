@@ -26,7 +26,24 @@
         "script": "conformance/scripts/spawn_reference_http.sh",
         "args": ["broken-http", "noauth"]
       }
+    },
+    {
+      "id": "good-stdio",
+      "kind": "stdio",
+      "cmd": "node stdio-hello/server.mjs",
+      "spawn": {
+        "script": "conformance/scripts/spawn_reference_stdio.sh",
+        "args": ["good-stdio"]
+      }
+    },
+    {
+      "id": "broken-stdio",
+      "kind": "stdio",
+      "cmd": "node stdio-broken/server.mjs",
+      "spawn": {
+        "script": "conformance/scripts/spawn_reference_stdio.sh",
+        "args": ["broken-stdio"]
+      }
     }
   ]
 }
-

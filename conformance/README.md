@@ -4,7 +4,7 @@ This folder contains pinned inputs and fixture wiring used by `x07-mcp-test conf
 
 - `pinned/official-package-version.txt`: pinned `@modelcontextprotocol/conformance` version.
 - `pinned/conformance-baseline.yml`: expected failures baseline passed to the official suite.
-- `fixtures/targets.json`: local Week 2 fixture matrix (good/auth/broken).
-- `scripts/spawn_reference_http.sh`: fixture server launcher.
+- `fixtures/targets.json`: local fixture matrix (HTTP + stdio).
+- `scripts/spawn_reference_http.sh`: Streamable HTTP fixture launcher.
+- `scripts/spawn_reference_stdio.sh`: stdio fixture launcher.
 - `scripts/wait_for_http.sh`: HTTP readiness helper.
-

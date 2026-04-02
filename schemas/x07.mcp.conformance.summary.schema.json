@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://x07.io/schemas/x07.mcp.conformance.summary.schema.json",
-  "title": "x07.mcp.conformance.summary@0.1.0",
+  "title": "x07.mcp.conformance.summary@0.2.0",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -15,7 +15,7 @@
     "warnings"
   ],
   "properties": {
-    "schema_version": { "const": "x07.mcp.conformance.summary@0.1.0" },
+    "schema_version": { "const": "x07.mcp.conformance.summary@0.2.0" },
     "generated_at": { "type": "string", "format": "date-time" },
     "tool": { "type": "string", "minLength": 1 },
     "tool_version": { "type": "string", "minLength": 1 },
@@ -29,9 +29,10 @@
     "target": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["kind", "ref"],
+      "required": ["kind", "transport", "ref", "meta"],
       "properties": {
-        "kind": { "type": "string", "minLength": 1 },
+        "kind": { "enum": ["mcp_server", "file"] },
+        "transport": { "enum": ["streamable_http", "stdio", "file"] },
         "ref": { "type": "string", "minLength": 1 },
         "meta": { "type": "object", "additionalProperties": true }
       }
@@ -48,4 +49,3 @@
     }
   }
 }
-

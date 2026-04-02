@@ -27,20 +27,26 @@ x07-mcp-test conformance run \
   --machine json
 ```
 
-## Usage (M1)
+## Usage
 
 - `x07-mcp-test --help`
 - `x07-mcp-test doctor`
 - `x07-mcp-test doctor --machine json --cmd "<stdio cmd>" --url "<http url>"`
 - `x07-mcp-test conformance run --url "<http url>"`
+- `x07-mcp-test conformance run --cmd "<stdio cmd>" --cwd "<dir>" --env-file "<file>"`
 - `x07-mcp-test conformance run --url "<http url>" --out out/`
 - `x07-mcp-test conformance run --url "<http url>" --full-suite`
 - `x07-mcp-test replay record --url "<http url>" --out out/replay.session.json --scenario smoke/basic`
+- `x07-mcp-test replay record --cmd "<stdio cmd>" --out out/replay.session.json`
 - `x07-mcp-test replay verify --session out/replay.session.json --url "<http url>" --out out/replay-verify`
+- `x07-mcp-test replay verify --session out/replay.session.json --cmd "<stdio cmd>" --out out/replay-verify`
 - `x07-mcp-test trust verify --server-json "<path>"`
 - `x07-mcp-test bundle verify --server-json "<path>" --mcpb "<path>"`
+- `x07-mcp-test corpus run --manifest corpus/manifests/quality-report-001.json --out out/corpus/quality-report-001`
 
 See `docs/doctor.md`.
+See `docs/targets.md`.
+See `corpus/README.md`.
 
 ## Install (alpha)
 
@@ -72,15 +78,21 @@ curl -fsSL "https://github.com/x07lang/x07-mcp-test/releases/download/v0.1.0-alp
 
 ## Schemas
 
-Week 1 freezes report schema naming and the shared envelope fields:
+Report schemas and shared envelope fields are versioned and pinned for consumers:
 
-- `x07.mcp.conformance.summary@0.1.0` (`schemas/x07.mcp.conformance.summary.schema.json`)
-- `x07.mcp.replay.session@0.1.0` (`schemas/x07.mcp.replay.session.schema.json`)
-- `x07.mcp.replay.verify@0.1.0` (`schemas/x07.mcp.replay.verify.schema.json`)
-- `x07.mcp.trust.summary@0.1.0` (`schemas/x07.mcp.trust.summary.schema.json`)
-- `x07.mcp.bundle.verify@0.1.0` (`schemas/x07.mcp.bundle.verify.schema.json`)
+- `x07.mcp.conformance.summary@0.2.0` (`schemas/x07.mcp.conformance.summary.schema.json`)
+- `x07.mcp.replay.session@0.2.0` (`schemas/x07.mcp.replay.session.schema.json`)
+- `x07.mcp.replay.verify@0.2.0` (`schemas/x07.mcp.replay.verify.schema.json`)
+- `x07.mcp.trust.summary@0.2.0` (`schemas/x07.mcp.trust.summary.schema.json`)
+- `x07.mcp.bundle.verify@0.2.0` (`schemas/x07.mcp.bundle.verify.schema.json`)
+- `x07.mcp.report.manifest@0.1.0` (`schemas/x07.mcp.report.manifest.schema.json`)
+- `x07.mcp.corpus.result@0.1.0` (`schemas/x07.mcp.corpus.result.schema.json`)
+- `x07.mcp.corpus.summary@0.1.0` (`schemas/x07.mcp.corpus.summary.schema.json`)
+- `x07.mcp.sarif@0.1.0` (`schemas/x07.mcp.sarif.schema.json`)
 
 Sample fixtures live under `fixtures/reports/` and validate in CI.
+
+See `docs/schema-versioning.md`.
 
 ## Notes
 
@@ -92,7 +104,7 @@ Sample fixtures live under `fixtures/reports/` and validate in CI.
 ## Conformance outputs
 
 `x07-mcp-test conformance run` writes:
-- `summary.json` (schema: `x07.mcp.conformance.summary@0.1.0`)
+- `summary.json` (schema: `x07.mcp.conformance.summary@0.2.0`)
 - `summary.junit.xml`
 - `summary.html`
 
@@ -101,9 +113,9 @@ Exit codes:
 - `1` one or more required scenarios failed
 - `2` invocation/config/runtime precondition failure
 
-## CI / GitHub Action (alpha)
+## CI / GitHub Action contract
 
-The alpha Action downloads an `x07-mcp-test` release binary and runs `conformance run`:
+The Action downloads an `x07-mcp-test` release binary and runs `conformance run` (HTTP or stdio):
 
 ```yaml
 - name: Run MCP conformance
@@ -115,7 +127,7 @@ The alpha Action downloads an `x07-mcp-test` release binary and runs `conformanc
 
 See `action/README.md`.
 
-## Fixture targets (Week 2)
+## Fixture targets
 
 Local fixture servers live under `fixtures/servers/` and are wired via:
 - `conformance/fixtures/targets.json`
@@ -129,12 +141,17 @@ Ports/URLs:
 
 Start a fixture server:
 - `conformance/scripts/spawn_reference_http.sh good-http noauth`
+- `conformance/scripts/spawn_reference_stdio.sh good-stdio`
+
+Stdio fixtures:
+- `good-stdio`: `node stdio-hello/server.mjs`
+- `broken-stdio`: `node stdio-broken/server.mjs`
 
 ## Known limitations (alpha)
 
 - Windows support is via WSL2 (run inside a Linux distro and use `linux-x64`).
 - Conformance requires Node/npm/npx.
-- M1 conformance targets HTTP only.
+- Some stdio target flows are still being stabilized; use the stdio fixtures as the reference shape.
 
 ## Feedback
 

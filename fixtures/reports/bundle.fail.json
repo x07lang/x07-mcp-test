@@ -1,9 +1,9 @@
 {
-  "schema_version": "x07.mcp.bundle.verify@0.1.0",
+  "schema_version": "x07.mcp.bundle.verify@0.2.0",
   "generated_at": "2026-03-31T00:00:00Z",
   "tool": "x07-mcp-test",
   "tool_version": "0.1.0-alpha.4",
-  "target": { "kind": "file", "ref": "./bundle.mcpb" },
+  "target": { "kind": "file", "transport": "file", "ref": "./bundle.mcpb", "meta": {} },
   "ok": false,
   "errors": [{ "id": "bundle.invalid", "message": "bundle verification failed" }],
   "warnings": [],

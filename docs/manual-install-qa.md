@@ -1,6 +1,6 @@
-# Manual install QA (M1)
+# Manual install QA
 
-This is the Week 4 manual install QA worksheet for `x07-mcp-test`.
+Manual install QA worksheet for `x07-mcp-test`.
 
 Goal: confirm that a cold user can download and run the alpha verifier without building from source.
 
@@ -9,7 +9,7 @@ Goal: confirm that a cold user can download and run the alpha verifier without b
 - tag:
 - release URL:
 
-## Required coverage (M1)
+## Required coverage
 
 - macOS arm64 (fresh machine)
 - macOS x64 (fresh machine)
@@ -46,4 +46,4 @@ Record:
 
 ## Notes
 
-- Windows support for M1 is via WSL2 (run X07 tools inside Linux).
+- Windows support is via WSL2 (run X07 tools inside Linux).

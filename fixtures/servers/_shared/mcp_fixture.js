@@ -53,7 +53,7 @@ function requireBearerAuth(req, res, next) {
   res.status(401).end();
 }
 
-function getServer() {
+export function getServer() {
   const server = new McpServer({ name: 'x07-mcp-test-fixture', version: '1.0.0' }, { capabilities: { logging: {} } });
 
   server.registerTool(
@@ -141,4 +141,3 @@ export function startFixture({ requireAuth = false } = {}) {
     server.close(() => process.exit(0));
   });
 }
-

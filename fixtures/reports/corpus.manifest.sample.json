@@ -1,0 +1,19 @@
+{
+  "schema_version": "x07.mcp.report.manifest@0.1.0",
+  "report_id": "quality-report-001",
+  "targets": [
+    {
+      "id": "good-http",
+      "source": { "repo": "https://github.com/example/mcp-server", "version": "v1.2.3" },
+      "target": {
+        "kind": "mcp_server",
+        "transport": "streamable_http",
+        "ref": "http://127.0.0.1:18080/mcp",
+        "meta": {}
+      },
+      "assumptions": { "auth_mode": "none" },
+      "exclusions": { "skip_scenarios": [] }
+    }
+  ]
+}
+

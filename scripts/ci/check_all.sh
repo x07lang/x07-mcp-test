@@ -7,6 +7,9 @@ cd "${repo_root}"
 echo "==> repo hygiene"
 python3 scripts/ci/check_repo_hygiene.py >/dev/null
 
+echo "==> action contract"
+bash action/tests/test_validate_inputs.sh >/dev/null
+
 echo "==> node version"
 if ! command -v node >/dev/null 2>&1; then
   echo "ERROR: node not found (required for conformance fixtures)" >&2
@@ -43,6 +46,40 @@ echo "==> cli smoke"
 
 echo "==> schema fixtures"
 "${bin_path}" ci validate-fixtures
+
+echo "==> corpus skeleton smoke"
+
+corpus_out="${tmp_dir}/corpus"
+rm -rf "${corpus_out}"
+mkdir -p "${corpus_out}"
+
+set +e
+"${bin_path}" corpus run \
+  --manifest corpus/manifests/quality-report-001.json \
+  --out "${corpus_out}" \
+  --machine json >"${tmp_dir}/corpus.run.stdout.json"
+corpus_exit="$?"
+set -e
+if [[ "${corpus_exit}" != "1" ]]; then
+  echo "ERROR: expected corpus run skeleton to exit 1 (got ${corpus_exit})" >&2
+  cat "${tmp_dir}/corpus.run.stdout.json" >&2 || true
+  exit 1
+fi
+
+test -s "${corpus_out}/index.json"
+"${bin_path}" ci validate-json \
+  --schema schemas/x07.mcp.corpus.summary.schema.json \
+  --input "${corpus_out}/index.json"
+
+test -s "${corpus_out}/good-http/result.json"
+"${bin_path}" ci validate-json \
+  --schema schemas/x07.mcp.corpus.result.schema.json \
+  --input "${corpus_out}/good-http/result.json"
+
+test -s "${corpus_out}/good-http/summary.json"
+"${bin_path}" ci validate-json \
+  --schema schemas/x07.mcp.conformance.summary.schema.json \
+  --input "${corpus_out}/good-http/summary.json"
 
 echo "==> doctor smoke"
 ok_json="${tmp_dir}/doctor.ok.json"
@@ -134,6 +171,36 @@ run_conformance_fixture() (
 run_conformance_fixture good-http noauth http://127.0.0.1:18080/mcp 0
 run_conformance_fixture auth-http oauth http://127.0.0.1:18081/mcp 1
 run_conformance_fixture broken-http noauth http://127.0.0.1:18082/mcp 1
+
+echo "==> stdio fixture smoke"
+
+(
+  cd fixtures/servers
+  if [[ ! -d node_modules ]]; then
+    npm ci >/dev/null
+  fi
+  node _shared/stdio_smoke_client.mjs stdio-hello/server.mjs --expect-tool test_tool_with_progress >/dev/null
+)
+
+set +e
+stdio_broken_err="${repo_root}/${tmp_dir}/stdio-broken.stderr.txt"
+rm -f "${stdio_broken_err}"
+(
+  cd fixtures/servers
+  node _shared/stdio_smoke_client.mjs stdio-broken/server.mjs >/dev/null 2>"${stdio_broken_err}"
+)
+stdio_broken_exit="$?"
+set -e
+if [[ "${stdio_broken_exit}" == "0" ]]; then
+  echo "ERROR: expected stdio-broken fixture to fail smoke client" >&2
+  cat "${stdio_broken_err}" >&2 || true
+  exit 1
+fi
+if ! grep -q '^stdio smoke client error:' "${stdio_broken_err}"; then
+  echo "ERROR: stdio-broken fixture stderr did not contain expected error prefix" >&2
+  cat "${stdio_broken_err}" >&2 || true
+  exit 1
+fi
 
 echo "==> replay fixtures"
 

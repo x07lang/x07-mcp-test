@@ -1,12 +1,12 @@
-# MCP wedge (M1) — Website IA + message hierarchy
+# MCP website IA + message hierarchy
 
-This is the Week 1 freeze doc for the MCP wedge information architecture and messaging hierarchy.
+Information architecture and messaging hierarchy for the MCP wedge pages.
 
 ## Route list (frozen)
 
 - `/mcp` — Wedge landing page (what it is + why it matters).
 - `/mcp/install` — Install `x07-mcp-test` (private alpha) and run `doctor`.
-- `/mcp/action` — CI integration preview (GitHub Action surface; stub in M1 if needed).
+- `/mcp/action` — CI integration preview (GitHub Action surface).
 - `/mcp/codespaces` — Zero-install evaluation path (Codespaces).
 
 ## Message hierarchy (frozen)
@@ -25,12 +25,12 @@ This is the Week 1 freeze doc for the MCP wedge information architecture and mes
 - Subhead: Prebuilt binaries; conformance requires a working Node/npm toolchain.
 - CTA 1: Download latest alpha release
 - CTA 2: Run `x07-mcp-test doctor`
-- CTA 3: Run `x07-mcp-test conformance run` (Week 2)
+- CTA 3: Run `x07-mcp-test conformance run`
 
 ### `/mcp/action`
 
 - Headline: Run MCP conformance in CI
-- Subhead: GitHub Action wrapper around `x07-mcp-test` outputs (Week 2+).
+- Subhead: GitHub Action wrapper around `x07-mcp-test` outputs.
 - CTA 1: See the Action YAML snippet
 - CTA 2: View sample report artifacts
 - CTA 3: Open an issue for early access
@@ -43,7 +43,7 @@ This is the Week 1 freeze doc for the MCP wedge information architecture and mes
 - CTA 2: Run the quickstart
 - CTA 3: Leave feedback
 
-## Explicitly out of scope in M1
+## Explicitly out of scope (for now)
 
 - No x07 homepage rewrite.
 - No “State of MCP quality” report page yet.
@@ -51,5 +51,4 @@ This is the Week 1 freeze doc for the MCP wedge information architecture and mes
 
 ## Feedback destination
 
-Week 1 placeholder: file issues in `x07lang/x07-mcp-test` with labels `m1` + `feedback`.
-
+File issues in `x07lang/x07-mcp-test` with label `feedback`.
