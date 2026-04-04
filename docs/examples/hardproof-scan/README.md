@@ -2,7 +2,7 @@
 
 This directory contains sample artifacts that website/docs/announcements can embed directly.
 
-Generated from the `good-http` fixture target using `hardproof v0.1.0-alpha.9`.
+Generated from the `good-http` fixture target using `hardproof v0.2.0-beta.1`.
 
 ## Contents
 

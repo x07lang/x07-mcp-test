@@ -8,11 +8,13 @@ usage() {
 Install the Hardproof verifier binary from GitHub Releases.
 
 Usage:
+  install.sh --tag <v0.2.0-beta.N>
+  install.sh --tag latest-beta
   install.sh --tag <v0.1.0-alpha.N>
   install.sh --tag latest-alpha
 
 Options:
-  --tag <TAG>         Git tag to install from (example: v0.1.0-alpha.9, or latest-alpha)
+  --tag <TAG>         Git tag to install from (example: v0.2.0-beta.1, latest-beta, v0.1.0-alpha.9, latest-alpha)
   --install-dir <DIR> Install directory (default: ~/.local/bin)
 
 Notes:
@@ -51,7 +53,39 @@ if [[ -z "${tag}" ]]; then
   exit 2
 fi
 
-if [[ "${tag}" == "latest-alpha" || "${tag}" == "latest-alpha"* ]]; then
+if [[ "${tag}" == "latest-beta" || "${tag}" == "latest-beta"* ]]; then
+  echo "==> resolve latest beta tag for ${REPO}"
+  curl_args=(
+    -fsSL
+    "https://api.github.com/repos/${REPO}/releases"
+  )
+  if [[ -n "${GITHUB_TOKEN:-}" ]]; then
+    curl_args=(
+      -fsSL
+      -H "Authorization: Bearer ${GITHUB_TOKEN}"
+      -H "X-GitHub-Api-Version: 2022-11-28"
+      "https://api.github.com/repos/${REPO}/releases"
+    )
+  fi
+  releases_json="$(curl "${curl_args[@]}")"
+  tag="$(
+    python3 - <<'PY' "${releases_json}"
+import json, re, sys
+data = json.loads(sys.argv[1])
+for r in data:
+  t = r.get("tag_name","")
+  if re.match(r"^v0\.2\.\d+-beta\.\d+$", t):
+    print(t)
+    sys.exit(0)
+print("", end="")
+sys.exit(0)
+PY
+  )"
+  if [[ -z "${tag}" ]]; then
+    echo "ERROR: failed to resolve latest beta tag; pass --tag v0.2.0-beta.N explicitly." >&2
+    exit 1
+  fi
+elif [[ "${tag}" == "latest-alpha" || "${tag}" == "latest-alpha"* ]]; then
   echo "==> resolve latest alpha tag for ${REPO}"
   curl_args=(
     -fsSL

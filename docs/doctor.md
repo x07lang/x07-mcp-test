@@ -1,6 +1,6 @@
 # `hardproof doctor`
 
-Environment and toolchain diagnostics for running the private-alpha MCP wedge CLI.
+Environment and toolchain diagnostics for running Hardproof.
 
 ## Usage
 

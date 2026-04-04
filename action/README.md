@@ -1,6 +1,6 @@
 # Hardproof Scan (beta)
 
-This Action downloads a `hardproof` release binary and runs `hardproof scan` against a target MCP server (HTTP or stdio).
+This Action downloads a `hardproof` release binary and runs `hardproof ci` against a target MCP server (HTTP or stdio).
 
 ## Usage
 
@@ -29,9 +29,10 @@ jobs:
 
       - name: Run Hardproof scan
         id: mcp
-        uses: x07lang/hardproof/hardproof-scan@v0.1.0-alpha.9
+        uses: x07lang/hardproof/hardproof-scan@v0.2.0-beta.1
         with:
           url: http://127.0.0.1:3000/mcp
+          threshold: "80"
           full-suite: "false"
           sarif: "true"
 
@@ -53,11 +54,12 @@ jobs:
 ```yaml
 - name: Run Hardproof scan (stdio)
   id: mcp
-  uses: x07lang/hardproof/hardproof-scan@v0.1.0-alpha.9
+  uses: x07lang/hardproof/hardproof-scan@v0.2.0-beta.1
   with:
     cmd: ./server --stdio
     cwd: servers/my-mcp
     env-file: .env.mcp
+    threshold: "80"
     full-suite: "false"
 ```
 
@@ -70,7 +72,8 @@ jobs:
 - `full-suite` (optional): `"true"` to run the extended suite
 - `baseline` (optional): path to an expected-failures YAML file
 - `sarif` (optional): `"true"` to emit a `summary.sarif.json` file
-- `version` (optional): `v0.1.*-alpha.*` tag, or `latest-alpha`
+- `threshold` (optional): minimum score (0-100) required to pass (default `"80"`)
+- `version` (optional): `v0.2.*-beta.*` tag, or `latest-beta`
 
 ## Outputs
 

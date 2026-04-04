@@ -30,10 +30,14 @@ inputs:
     description: Emit a SARIF report file (default false)
     required: false
     default: "false"
-  version:
-    description: "Hardproof release tag (example: v0.1.0-alpha.9) or latest-alpha"
+  threshold:
+    description: Minimum score (0-100) required to pass (default 80)
     required: false
-    default: latest-alpha
+    default: "80"
+  version:
+    description: "Hardproof release tag (example: v0.2.0-beta.1) or latest-beta"
+    required: false
+    default: latest-beta
 
 outputs:
   scan_ok:
@@ -99,11 +103,12 @@ runs:
         HARDPROOF_ACTION_CMD: ${{ inputs.cmd }}
         HARDPROOF_ACTION_FULL_SUITE: ${{ inputs.full-suite }}
         HARDPROOF_ACTION_SARIF: ${{ inputs.sarif }}
+        HARDPROOF_ACTION_THRESHOLD: ${{ inputs.threshold }}
       run: |
         set -euo pipefail
         bash "${GITHUB_ACTION_PATH}/../action/validate_inputs.sh"
 
-    - name: Conformance run
+    - name: Hardproof CI
       id: conformance
       shell: bash
       run: |
@@ -118,7 +123,7 @@ runs:
         cwd="${{ inputs.cwd }}"
         env_file="${{ inputs.env-file }}"
 
-        args=(scan --out "${out_dir}" --machine json)
+        args=(ci --out "${out_dir}" --machine json --threshold "${{ inputs.threshold }}")
         if [[ -n "${url}" ]]; then
           args+=(--url "${url}")
         fi
@@ -137,7 +142,6 @@ runs:
         if [[ -n "${{ inputs.baseline }}" ]]; then
           args+=(--baseline "${{ inputs.baseline }}")
         fi
-
         set +e
         "${HARDPROOF_BIN}" "${args[@]}" >"${out_dir}/summary.stdout.json"
         exit_code="$?"
@@ -169,6 +173,6 @@ runs:
         fi
 
         if [[ "${exit_code}" == "1" ]]; then
-          echo "ERROR: one or more required conformance scenarios failed (exit 1)." >&2
+          echo "ERROR: scan failed or score fell below threshold (exit 1)." >&2
           exit 1
         fi

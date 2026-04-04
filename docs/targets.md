@@ -1,6 +1,6 @@
 # Targets and transports
 
-`hardproof` is moving from an HTTP-only private alpha to a dual-transport public beta.
+`hardproof` supports both Streamable HTTP and stdio targets in the public beta.
 
 The verifier treats MCP targets as an explicit **transport + reference** pair:
 

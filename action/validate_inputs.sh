@@ -5,6 +5,7 @@ url="${HARDPROOF_ACTION_URL:-}"
 cmd="${HARDPROOF_ACTION_CMD:-}"
 full_suite="${HARDPROOF_ACTION_FULL_SUITE:-false}"
 sarif="${HARDPROOF_ACTION_SARIF:-false}"
+threshold="${HARDPROOF_ACTION_THRESHOLD:-80}"
 
 if [[ -n "${url}" && -n "${cmd}" ]]; then
   echo "ERROR: set exactly one of 'url' or 'cmd'." >&2
@@ -30,3 +31,12 @@ case "${sarif}" in
     exit 2
     ;;
 esac
+
+if ! [[ "${threshold}" =~ ^[0-9]+$ ]]; then
+  echo "ERROR: invalid 'threshold' value (expected integer 0-100): ${threshold}" >&2
+  exit 2
+fi
+if (( threshold > 100 )); then
+  echo "ERROR: invalid 'threshold' value (expected integer 0-100): ${threshold}" >&2
+  exit 2
+fi

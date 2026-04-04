@@ -4,6 +4,14 @@
 
 - (none yet)
 
+## v0.2.0-beta.1
+
+- Implement `hardproof ci` threshold gating based on conformance score (passed/total).
+- Update GitHub Action to run `hardproof ci` and add `threshold` input (default `"80"`).
+- Update `install.sh` to resolve `latest-beta`.
+- Update release workflow to build beta tags.
+- Bump embedded tool version strings to `0.2.0-beta.1`.
+
 ## v0.1.0-alpha.9
 
 - Fix GitHub Action to call `hardproof` without the unsupported `--sarif` flag.

@@ -159,7 +159,17 @@ class _Handler(BaseHTTPRequestHandler):
                     {
                         "jsonrpc": "2.0",
                         "method": "notifications/progress",
+                        "params": {"progressToken": token, "progress": 0.0},
+                    },
+                    {
+                        "jsonrpc": "2.0",
+                        "method": "notifications/progress",
                         "params": {"progressToken": token, "progress": 0.5},
+                    },
+                    {
+                        "jsonrpc": "2.0",
+                        "method": "notifications/progress",
+                        "params": {"progressToken": token, "progress": 1.0},
                     },
                     {
                         "jsonrpc": "2.0",

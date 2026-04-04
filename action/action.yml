@@ -30,10 +30,14 @@ inputs:
     description: Emit a SARIF report file (default false)
     required: false
     default: "false"
-  version:
-    description: "Hardproof release tag (example: v0.1.0-alpha.9) or latest-alpha"
+  threshold:
+    description: Minimum score (0-100) required to pass (default 80)
     required: false
-    default: latest-alpha
+    default: "80"
+  version:
+    description: "Hardproof release tag (example: v0.2.0-beta.1) or latest-beta"
+    required: false
+    default: latest-beta
 
 outputs:
   scan_ok:
@@ -80,4 +84,5 @@ runs:
         full-suite: ${{ inputs.full-suite }}
         baseline: ${{ inputs.baseline }}
         sarif: ${{ inputs.sarif }}
+        threshold: ${{ inputs.threshold }}
         version: ${{ inputs.version }}

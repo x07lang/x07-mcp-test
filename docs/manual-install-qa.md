@@ -2,7 +2,7 @@
 
 Manual install QA worksheet for `hardproof`.
 
-Goal: confirm that a cold user can download and run the alpha verifier without building from source.
+Goal: confirm that a cold user can download and run the beta verifier without building from source.
 
 ## Release under test
 
@@ -42,7 +42,7 @@ Record:
 - [ ] target URL reachable (or stdio command runnable)
 - [ ] run `hardproof scan --help`
 - [ ] run `hardproof scan --url "<URL>" --out out/conformance --machine json`
-- [ ] outputs produced: `summary.json`, `summary.junit.xml`, `summary.html`
+- [ ] outputs produced: `summary.json`, `summary.junit.xml`, `summary.html`, `summary.sarif.json`
 
 ## Notes
 

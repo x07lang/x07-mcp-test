@@ -25,7 +25,7 @@ Information architecture and messaging hierarchy for the MCP wedge pages.
 
 - Headline: Install `hardproof`
 - Subhead: Prebuilt binaries; conformance runs inside `hardproof` with no external toolchain.
-- CTA 1: Download latest alpha release
+- CTA 1: Download latest beta release
 - CTA 2: Run `hardproof doctor`
 - CTA 3: Run `hardproof scan`
 

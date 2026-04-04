@@ -52,32 +52,32 @@ See `docs/doctor.md`.
 See `docs/targets.md`.
 See `corpus/README.md`.
 
-## Install (alpha)
+## Install (beta)
 
-Release artifacts are built via GitHub Actions on tags like `v0.1.*-alpha*`.
+Release artifacts are built via GitHub Actions on tags like `v0.2.*-beta.*`.
 
 On Windows, run inside WSL2 and use the `linux_x86_64` artifact.
 
 ### Install script
 
-Each alpha release publishes an installer script (`install.sh`) that downloads the right archive for your OS/arch, verifies it via `checksums.txt`, and installs `hardproof` to `~/.local/bin`:
+Each beta release publishes an installer script (`install.sh`) that downloads the right archive for your OS/arch, verifies it via `checksums.txt`, and installs `hardproof` to `~/.local/bin`:
 
 ```sh
-curl -fsSL "https://github.com/x07lang/hardproof/releases/download/v0.1.0-alpha.9/install.sh" \
-  | bash -s -- --tag "v0.1.0-alpha.9"
+curl -fsSL "https://github.com/x07lang/hardproof/releases/download/v0.2.0-beta.1/install.sh" \
+  | bash -s -- --tag "v0.2.0-beta.1"
 ```
 
-You can also resolve the latest alpha tag (requires GitHub API access):
+You can also resolve the latest beta tag (requires GitHub API access):
 
 ```sh
-curl -fsSL "https://github.com/x07lang/hardproof/releases/download/v0.1.0-alpha.9/install.sh" \
-  | bash -s -- --tag latest-alpha
+curl -fsSL "https://github.com/x07lang/hardproof/releases/download/v0.2.0-beta.1/install.sh" \
+  | bash -s -- --tag latest-beta
 ```
 
 ### Manual install
 
 1) Download `hardproof_<VERSION>_<linux_x86_64|macos_arm64|macos_x86_64>.tar.gz` and `checksums.txt` from GitHub Releases.
-   (`VERSION` is the tag without the `v` prefix, like `0.1.0-alpha.9`.)
+   (`VERSION` is the tag without the `v` prefix, like `0.2.0-beta.1`.)
 
 2) Verify `sha256`, extract, and place `hardproof` on your `PATH`.
 
@@ -125,7 +125,7 @@ The Action downloads a `hardproof` release binary and runs `hardproof scan` (HTT
 
 ```yaml
 - name: Run Hardproof scan
-  uses: x07lang/hardproof/hardproof-scan@v0.1.0-alpha.9
+  uses: x07lang/hardproof/hardproof-scan@v0.2.0-beta.1
   with:
     url: http://127.0.0.1:3000/mcp
     full-suite: "false"
@@ -154,7 +154,7 @@ Stdio fixtures:
 - `good-stdio`: `conformance/scripts/spawn_reference_stdio.sh good-stdio`
 - `broken-stdio`: `conformance/scripts/spawn_reference_stdio.sh broken-stdio`
 
-## Known limitations (alpha)
+## Known limitations (beta)
 
 - Windows support is via WSL2 (run inside a Linux distro and use `linux_x86_64`).
 - Some stdio target flows are still being stabilized; use the stdio fixtures as the reference shape.
