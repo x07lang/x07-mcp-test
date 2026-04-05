@@ -41,8 +41,14 @@ Record:
 
 - [ ] target URL reachable (or stdio command runnable)
 - [ ] run `hardproof scan --help`
-- [ ] run `hardproof scan --url "<URL>" --out out/conformance --machine json`
-- [ ] outputs produced: `summary.json`, `summary.junit.xml`, `summary.html`, `summary.sarif.json`
+- [ ] run `hardproof scan --url "<URL>" --out out/scan --machine json`
+- [ ] outputs produced:
+  - `scan.json`
+  - `scan.events.jsonl`
+  - `conformance.summary.json`
+  - `conformance.summary.junit.xml`
+  - `conformance.summary.html`
+  - `conformance.summary.sarif.json`
 
 ## Notes
 

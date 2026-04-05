@@ -1,5 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="960" height="280" viewBox="0 0 960 280">
-  <rect width="960" height="280" rx="12" fill="#0b0e14" />
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="740" viewBox="0 0 960 740">
+  <rect width="960" height="740" rx="12" fill="#0b0e14" />
   <circle cx="24" cy="22" r="6" fill="#ff5f56" />
   <circle cx="44" cy="22" r="6" fill="#ffbd2e" />
   <circle cx="64" cy="22" r="6" fill="#27c93f" />
@@ -7,18 +7,41 @@
     x="24"
     y="58"
     font-family="SFMono-Regular, Menlo, Monaco, Consolas, monospace"
-    font-size="16"
+    font-size="14"
     fill="#c0caf5"
     xml:space="preserve"
   >
-    <tspan x="24" dy="0">$ hardproof scan --url http://127.0.0.1:18080/mcp --out out/conformance</tspan>
-    <tspan x="24" dy="24">check       | result</tspan>
-    <tspan x="24" dy="24">conformance | pass  </tspan>
+    <tspan x="24" dy="0">$ hardproof scan --url http://127.0.0.1:18080/mcp --out out/scan</tspan>
+    <tspan x="24" dy="20">+------------------------------------+</tspan>
+    <tspan x="24" dy="20">| Scan                               |</tspan>
+    <tspan x="24" dy="20">+------------------------------------+</tspan>
+    <tspan x="24" dy="20">| target: http://127.0.0.1:18080/mcp |</tspan>
+    <tspan x="24" dy="20">| transport: streamable_http         |</tspan>
+    <tspan x="24" dy="20">| elapsed_ms: 157                    |</tspan>
+    <tspan x="24" dy="20">| status: WARN                       |</tspan>
+    <tspan x="24" dy="20">| score: 100                         |</tspan>
+    <tspan x="24" dy="20">| findings: critical 0, warning 0    |</tspan>
+    <tspan x="24" dy="20">+------------------------------------+</tspan>
     <tspan x="24" dy="24"> </tspan>
-    <tspan x="24" dy="24">ok: hardproof conformance run</tspan>
-    <tspan x="24" dy="24">  summary: out/conformance/summary.json</tspan>
-    <tspan x="24" dy="24">  junit: out/conformance/summary.junit.xml</tspan>
-    <tspan x="24" dy="24">  html: out/conformance/summary.html</tspan>
+    <tspan x="24" dy="20">== Dimensions ==</tspan>
+    <tspan x="24" dy="20">conformance  [##########] 100 PASS</tspan>
+    <tspan x="24" dy="20">security     [##########] 100 PASS</tspan>
+    <tspan x="24" dy="20">performance  [##########] 100 PASS</tspan>
+    <tspan x="24" dy="20">trust        n/a n/a UNKNOWN</tspan>
+    <tspan x="24" dy="20">reliability  [##########] 100 PASS</tspan>
+    <tspan x="24" dy="24"> </tspan>
+    <tspan x="24" dy="20">== Usage ==</tspan>
+    <tspan x="24" dy="20">catalog_tokens: 36</tspan>
+    <tspan x="24" dy="20">response_p95_tokens: 9</tspan>
+    <tspan x="24" dy="20">input_schema_tokens: 5</tspan>
+    <tspan x="24" dy="20">findings: none</tspan>
+    <tspan x="24" dy="24"> </tspan>
+    <tspan x="24" dy="20">== Findings ==</tspan>
+    <tspan x="24" dy="20">critical: none</tspan>
+    <tspan x="24" dy="20">warning: none</tspan>
+    <tspan x="24" dy="24"> </tspan>
+    <tspan x="24" dy="20">== Artifacts ==</tspan>
+    <tspan x="24" dy="20">report: out/scan/scan.json</tspan>
+    <tspan x="24" dy="20">events: out/scan/scan.events.jsonl</tspan>
   </text>
 </svg>
-

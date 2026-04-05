@@ -1,0 +1,32 @@
+{
+  "schema_version": "x07.sm.spec@0.1.0",
+  "machine_id": "scan.lifecycle",
+  "version": 1,
+  "world": "solve-pure",
+  "states": [
+    { "id": 0, "name": "idle", "terminal": false },
+    { "id": 1, "name": "probing", "terminal": false },
+    { "id": 2, "name": "running", "terminal": false },
+    { "id": 3, "name": "partial", "terminal": true },
+    { "id": 4, "name": "complete", "terminal": true },
+    { "id": 5, "name": "failed", "terminal": true }
+  ],
+  "events": [
+    { "id": 0, "name": "start_probe" },
+    { "id": 1, "name": "probe_ok" },
+    { "id": 2, "name": "probe_fail" },
+    { "id": 3, "name": "finish_ok" },
+    { "id": 4, "name": "finish_partial" },
+    { "id": 5, "name": "fail" }
+  ],
+  "transitions": [
+    { "id": 0, "from": 0, "on": 0, "to": 1, "action": "actions.noop_v1" },
+    { "id": 1, "from": 1, "on": 1, "to": 2, "action": "actions.noop_v1" },
+    { "id": 2, "from": 1, "on": 2, "to": 5, "action": "actions.noop_v1" },
+    { "id": 3, "from": 2, "on": 3, "to": 4, "action": "actions.noop_v1" },
+    { "id": 4, "from": 2, "on": 4, "to": 3, "action": "actions.noop_v1" },
+    { "id": 5, "from": 0, "on": 5, "to": 5, "action": "actions.noop_v1" },
+    { "id": 6, "from": 1, "on": 5, "to": 5, "action": "actions.noop_v1" },
+    { "id": 7, "from": 2, "on": 5, "to": 5, "action": "actions.noop_v1" }
+  ]
+}

@@ -35,41 +35,41 @@ inputs:
     required: false
     default: "80"
   version:
-    description: "Hardproof release tag (example: v0.2.0-beta.1) or latest-beta"
+    description: "Hardproof release tag (example: v0.3.0-beta.0) or latest-beta"
     required: false
     default: latest-beta
 
 outputs:
   scan_ok:
     description: "true if scan passed (exit 0)"
-    value: ${{ steps.conformance.outputs.ok }}
+    value: ${{ steps.scan.outputs.ok }}
   report_json:
-    description: Path to JSON summary report
-    value: ${{ steps.conformance.outputs.json_report }}
+    description: Path to scan report JSON (`scan.json`)
+    value: ${{ steps.scan.outputs.report_json }}
   report_junit:
-    description: Path to JUnit XML report
-    value: ${{ steps.conformance.outputs.junit_report }}
+    description: Path to conformance JUnit XML report (`conformance.summary.junit.xml`)
+    value: ${{ steps.scan.outputs.report_junit }}
   report_html:
-    description: Path to HTML report
-    value: ${{ steps.conformance.outputs.html_report }}
+    description: Path to HTML scan report (`report.html`)
+    value: ${{ steps.scan.outputs.report_html }}
   report_sarif:
     description: Path to SARIF report (when enabled)
-    value: ${{ steps.conformance.outputs.sarif_report }}
+    value: ${{ steps.scan.outputs.report_sarif }}
   ok:
     description: "compat alias for scan_ok"
-    value: ${{ steps.conformance.outputs.ok }}
+    value: ${{ steps.scan.outputs.ok }}
   json_report:
     description: "compat alias for report_json"
-    value: ${{ steps.conformance.outputs.json_report }}
+    value: ${{ steps.scan.outputs.report_json }}
   junit_report:
     description: "compat alias for report_junit"
-    value: ${{ steps.conformance.outputs.junit_report }}
+    value: ${{ steps.scan.outputs.report_junit }}
   html_report:
     description: "compat alias for report_html"
-    value: ${{ steps.conformance.outputs.html_report }}
+    value: ${{ steps.scan.outputs.report_html }}
   sarif_report:
     description: "compat alias for report_sarif"
-    value: ${{ steps.conformance.outputs.sarif_report }}
+    value: ${{ steps.scan.outputs.report_sarif }}
 
 runs:
   using: composite
@@ -109,12 +109,12 @@ runs:
         bash "${GITHUB_ACTION_PATH}/../action/validate_inputs.sh"
 
     - name: Hardproof CI
-      id: conformance
+      id: scan
       shell: bash
       run: |
         set -euo pipefail
 
-        out_dir="out/conformance"
+        out_dir="out/scan"
         rm -rf "${out_dir}"
         mkdir -p "${out_dir}"
 
@@ -143,7 +143,7 @@ runs:
           args+=(--baseline "${{ inputs.baseline }}")
         fi
         set +e
-        "${HARDPROOF_BIN}" "${args[@]}" >"${out_dir}/summary.stdout.json"
+        "${HARDPROOF_BIN}" "${args[@]}" >"${out_dir}/ci.stdout.json"
         exit_code="$?"
         set -e
 
@@ -153,19 +153,51 @@ runs:
         fi
 
         echo "ok=${ok}" >>"${GITHUB_OUTPUT}"
-        echo "json_report=${out_dir}/summary.json" >>"${GITHUB_OUTPUT}"
-        echo "junit_report=${out_dir}/summary.junit.xml" >>"${GITHUB_OUTPUT}"
-        echo "html_report=${out_dir}/summary.html" >>"${GITHUB_OUTPUT}"
+        echo "report_json=${out_dir}/scan.json" >>"${GITHUB_OUTPUT}"
+        echo "report_junit=${out_dir}/conformance.summary.junit.xml" >>"${GITHUB_OUTPUT}"
+        echo "report_html=${out_dir}/report.html" >>"${GITHUB_OUTPUT}"
+
+        if [[ ! -s "${out_dir}/scan.json" ]]; then
+          echo "ERROR: missing scan report: ${out_dir}/scan.json" >&2
+          exit 2
+        fi
+        if [[ ! -s "${out_dir}/scan.events.jsonl" ]]; then
+          echo "ERROR: missing scan events: ${out_dir}/scan.events.jsonl" >&2
+          exit 2
+        fi
+        if [[ ! -s "${out_dir}/conformance.summary.json" ]]; then
+          echo "ERROR: missing conformance summary: ${out_dir}/conformance.summary.json" >&2
+          exit 2
+        fi
+        if [[ ! -s "${out_dir}/conformance.summary.junit.xml" ]]; then
+          echo "ERROR: missing conformance JUnit: ${out_dir}/conformance.summary.junit.xml" >&2
+          exit 2
+        fi
+        if [[ ! -s "${out_dir}/conformance.summary.html" ]]; then
+          echo "ERROR: missing conformance HTML: ${out_dir}/conformance.summary.html" >&2
+          exit 2
+        fi
+        if [[ ! -s "${out_dir}/conformance.summary.sarif.json" ]]; then
+          echo "ERROR: missing conformance SARIF: ${out_dir}/conformance.summary.sarif.json" >&2
+          exit 2
+        fi
+
+        "${HARDPROOF_BIN}" report html --input "${out_dir}/scan.json" > "${out_dir}/report.html"
+        if [[ ! -s "${out_dir}/report.html" ]]; then
+          echo "ERROR: missing HTML report: ${out_dir}/report.html" >&2
+          exit 2
+        fi
 
         sarif_report=""
         if [[ "${{ inputs.sarif }}" == "true" ]]; then
-          sarif_report="${out_dir}/summary.sarif.json"
+          sarif_report="${out_dir}/report.sarif.json"
+          "${HARDPROOF_BIN}" report sarif --input "${out_dir}/scan.json" > "${sarif_report}"
           if [[ ! -s "${sarif_report}" ]]; then
             echo "ERROR: missing SARIF report: ${sarif_report}" >&2
             exit 2
           fi
         fi
-        echo "sarif_report=${sarif_report}" >>"${GITHUB_OUTPUT}"
+        echo "report_sarif=${sarif_report}" >>"${GITHUB_OUTPUT}"
 
         if [[ "${exit_code}" == "2" ]]; then
           echo "ERROR: scan failed due to invocation/config/runtime precondition (exit 2)." >&2

@@ -2,7 +2,15 @@
 
 ## Unreleased
 
-- (none yet)
+- TBD
+
+## v0.3.0-beta.0
+
+- Add `hardproof scan` v0.3 report contract (`x07.mcp.scan.*@0.3.0`) with five deterministic dimensions plus usage overlay.
+- Add rich/compact/json/jsonl scan output modes and a stable `scan.events.jsonl` event stream.
+- Add `hardproof ci` gating on overall score/status, per-dimension thresholds, severity counts, and usage/token thresholds.
+- Add `hardproof explain` and `hardproof report` (summary/html/sarif) for scan reports.
+- Add `score_core/` certified score kernel with PBT + `x07 trust certify` in CI.
 
 ## v0.2.0-beta.1
 

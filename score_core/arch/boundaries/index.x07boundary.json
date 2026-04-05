@@ -1,0 +1,27 @@
+{
+  "schema_version": "x07.arch.boundaries.index@0.1.0",
+  "boundaries": [
+    {
+      "id": "scan.score.overall_score_n_or_neg1_v1",
+      "symbol": "scan.score.overall_score_n_or_neg1_v1",
+      "node_id": "score_core",
+      "kind": "public_function",
+      "from_zone": "verified_core",
+      "to_zone": "verified_core",
+      "worlds_allowed": ["solve-pure"],
+      "input": {
+        "params": [
+          { "name": "score_weight_sum", "ty": "i32" },
+          { "name": "score_weight_total", "ty": "i32" }
+        ]
+      },
+      "output": { "ty": "i32" },
+      "smoke": {
+        "entry": "tests.scan_score.smoke_overall_threshold_v1",
+        "tests": ["scan_score/smoke_overall_threshold"]
+      },
+      "pbt": { "required": true, "tests": ["scan_score/overall_monotonicity"] },
+      "verify": { "required": true, "mode": "prove" }
+    }
+  ]
+}

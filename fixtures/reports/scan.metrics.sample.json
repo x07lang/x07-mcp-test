@@ -1,0 +1,6 @@
+{
+  "connect_latency_ms_p50": 12,
+  "connect_latency_ms_p95": 25,
+  "initialize_latency_ms_p50": 18,
+  "initialize_latency_ms_p95": 40
+}

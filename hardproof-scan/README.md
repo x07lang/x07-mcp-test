@@ -25,7 +25,7 @@ jobs:
 
       - name: Run Hardproof scan
         id: mcp
-        uses: x07lang/hardproof/hardproof-scan@v0.2.0-beta.1
+        uses: x07lang/hardproof/hardproof-scan@v0.3.0-beta.0
         with:
           url: http://127.0.0.1:3000/mcp
           threshold: "80"
@@ -39,10 +39,7 @@ jobs:
           name: hardproof-reports
           path: |
             out/doctor.json
-            out/conformance/summary.json
-            out/conformance/summary.junit.xml
-            out/conformance/summary.html
-            out/conformance/summary.sarif.json
+            out/scan
 ```
 
 ### stdio target
@@ -50,7 +47,7 @@ jobs:
 ```yaml
 - name: Run Hardproof scan (stdio)
   id: mcp
-  uses: x07lang/hardproof/hardproof-scan@v0.2.0-beta.1
+  uses: x07lang/hardproof/hardproof-scan@v0.3.0-beta.0
   with:
     cmd: ./server --stdio
     cwd: servers/my-mcp
@@ -67,17 +64,17 @@ jobs:
 - `env-file` (optional): env file to load for `cmd`
 - `full-suite` (optional): `"true"` to run the extended suite
 - `baseline` (optional): path to an expected-failures YAML file
-- `sarif` (optional): `"true"` to emit a `summary.sarif.json` file
+- `sarif` (optional): `"true"` to emit a `report.sarif.json` file
 - `threshold` (optional): minimum score (0-100) required to pass (default `"80"`)
-- `version` (optional): `v0.2.*-beta.*` tag, or `latest-beta`
+- `version` (optional): `v0.3.*-beta.*` tag, or `latest-beta`
 
 ## Outputs
 
 - `scan_ok`: `true` if scan passed (exit 0)
-- `report_json`: `out/conformance/summary.json`
-- `report_junit`: `out/conformance/summary.junit.xml`
-- `report_html`: `out/conformance/summary.html`
-- `report_sarif`: `out/conformance/summary.sarif.json` (when enabled)
+- `report_json`: `out/scan/scan.json`
+- `report_junit`: `out/scan/conformance.summary.junit.xml`
+- `report_html`: `out/scan/report.html`
+- `report_sarif`: `out/scan/report.sarif.json` (when enabled)
 
 Compatibility aliases (beta):
 - `ok`, `json_report`, `junit_report`, `html_report`, `sarif_report`
@@ -93,7 +90,7 @@ uses: x07lang/hardproof/action@v0.1.0-alpha.9
 Switch to:
 
 ```yaml
-uses: x07lang/hardproof/hardproof-scan@v0.2.0-beta.1
+uses: x07lang/hardproof/hardproof-scan@v0.3.0-beta.0
 ```
 
 The `action/` path remains available during the beta transition.

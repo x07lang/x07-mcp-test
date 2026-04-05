@@ -14,6 +14,11 @@ x07.mcp.<artifact>@<semver>
 
 ## Current schema ids
 
+- `x07.mcp.scan.report@0.3.0`
+- `x07.mcp.scan.dimension@0.3.0`
+- `x07.mcp.scan.finding@0.3.0`
+- `x07.mcp.scan.usage@0.3.0`
+- `x07.mcp.scan.metrics@0.3.0`
 - `x07.mcp.conformance.summary@0.2.0`
 - `x07.mcp.replay.session@0.2.0`
 - `x07.mcp.replay.verify@0.2.0`

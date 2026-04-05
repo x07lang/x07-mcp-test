@@ -1,0 +1,172 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://x07.io/schemas/x07.mcp.scan.report.schema.json",
+  "title": "x07.mcp.scan.report@0.3.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "tool",
+    "tool_family",
+    "tool_version",
+    "report_kind",
+    "target",
+    "transport",
+    "generated_at",
+    "methodology_version",
+    "status",
+    "score_available",
+    "overall_score",
+    "dimensions",
+    "usage_metrics",
+    "findings",
+    "artifacts",
+    "spec_baseline",
+    "report_digest",
+    "run_id",
+    "elapsed_ms"
+  ],
+  "properties": {
+    "schema_version": { "const": "x07.mcp.scan.report@0.3.0" },
+    "tool": { "type": "string", "minLength": 1 },
+    "tool_family": { "type": "string", "minLength": 1 },
+    "tool_version": { "type": "string", "minLength": 1 },
+    "report_kind": { "type": "string", "minLength": 1 },
+    "target": { "$ref": "#/$defs/target" },
+    "transport": { "type": "string", "enum": ["streamable_http", "stdio"] },
+    "generated_at": { "type": "string", "format": "date-time" },
+    "methodology_version": { "type": "string", "minLength": 1 },
+    "status": { "type": "string", "enum": ["pass", "warn", "fail", "unknown"] },
+    "score_available": { "type": "boolean" },
+    "overall_score": { "type": ["integer", "null"], "minimum": 0, "maximum": 100 },
+    "dimensions": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/dimension" }
+    },
+    "usage_metrics": { "$ref": "#/$defs/usage_metrics" },
+    "findings": { "type": "array", "items": { "$ref": "#/$defs/finding" } },
+    "artifacts": { "type": "array", "items": { "$ref": "#/$defs/artifact" } },
+    "spec_baseline": { "type": "string", "minLength": 1 },
+    "report_digest": { "$ref": "#/$defs/sha256_hex" },
+    "run_id": { "type": "string", "minLength": 1 },
+    "elapsed_ms": { "type": "integer", "minimum": 0 }
+  },
+  "$defs": {
+    "sha256_hex": {
+      "type": "string",
+      "minLength": 64,
+      "maxLength": 64,
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "transport", "ref", "meta"],
+      "properties": {
+        "kind": { "enum": ["mcp_server", "file"] },
+        "transport": { "enum": ["streamable_http", "stdio", "file"] },
+        "ref": { "type": "string", "minLength": 1 },
+        "meta": { "type": "object", "additionalProperties": true }
+      }
+    },
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "kind", "path", "digest", "content_type"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "kind": { "type": "string", "minLength": 1 },
+        "path": { "type": "string", "minLength": 1 },
+        "digest": { "$ref": "#/$defs/sha256_hex" },
+        "content_type": { "type": "string", "minLength": 1 }
+      }
+    },
+    "dimension": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "status",
+        "score",
+        "weight",
+        "metrics",
+        "finding_refs",
+        "artifact_refs"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "enum": ["conformance", "security", "performance", "trust", "reliability"]
+        },
+        "status": { "type": "string", "enum": ["pass", "warn", "fail", "unknown"] },
+        "score": { "type": ["integer", "null"], "minimum": 0, "maximum": 100 },
+        "weight": { "type": "number", "minimum": 0, "maximum": 1 },
+        "metrics": { "type": "object", "additionalProperties": true },
+        "finding_refs": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "artifact_refs": { "type": "array", "items": { "type": "string", "minLength": 1 } }
+      }
+    },
+    "finding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "code",
+        "dimension",
+        "severity",
+        "title",
+        "summary",
+        "evidence",
+        "suggested_fix",
+        "docs_ref"
+      ],
+      "properties": {
+        "code": { "type": "string", "minLength": 1 },
+        "dimension": {
+          "type": "string",
+          "enum": ["conformance", "security", "performance", "trust", "reliability", "usage"]
+        },
+        "severity": { "type": "string", "enum": ["info", "warning", "critical"] },
+        "title": { "type": "string", "minLength": 1 },
+        "summary": { "type": "string", "minLength": 1 },
+        "evidence": { "type": "object", "additionalProperties": true },
+        "suggested_fix": { "type": "string", "minLength": 1 },
+        "docs_ref": { "type": "string", "minLength": 1 }
+      }
+    },
+    "usage_metrics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tool_catalog_bytes",
+        "tool_catalog_est_tokens_cl100k",
+        "tool_catalog_est_tokens_o200k",
+        "avg_tool_description_tokens",
+        "max_tool_description_tokens",
+        "input_schema_bytes_total",
+        "input_schema_est_tokens_total",
+        "example_payload_est_tokens_total",
+        "replay_transcript_est_tokens_total",
+        "response_payload_est_tokens_p50",
+        "response_payload_est_tokens_p95",
+        "estimator_family",
+        "estimator_confidence"
+      ],
+      "properties": {
+        "tool_catalog_bytes": { "type": "integer", "minimum": 0 },
+        "tool_catalog_est_tokens_cl100k": { "type": "integer", "minimum": 0 },
+        "tool_catalog_est_tokens_o200k": { "type": "integer", "minimum": 0 },
+        "avg_tool_description_tokens": { "type": "integer", "minimum": 0 },
+        "max_tool_description_tokens": { "type": "integer", "minimum": 0 },
+        "input_schema_bytes_total": { "type": "integer", "minimum": 0 },
+        "input_schema_est_tokens_total": { "type": "integer", "minimum": 0 },
+        "example_payload_est_tokens_total": { "type": "integer", "minimum": 0 },
+        "replay_transcript_est_tokens_total": { "type": "integer", "minimum": 0 },
+        "response_payload_est_tokens_p50": { "type": "integer", "minimum": 0 },
+        "response_payload_est_tokens_p95": { "type": "integer", "minimum": 0 },
+        "estimator_family": { "type": "string", "minLength": 1 },
+        "estimator_confidence": { "type": "string", "enum": ["low", "medium", "high"] }
+      }
+    }
+  }
+}

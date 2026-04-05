@@ -1,0 +1,9 @@
+{
+  "name": "conformance",
+  "status": "pass",
+  "score": 95,
+  "weight": 0.3,
+  "metrics": {},
+  "finding_refs": ["F-CONF-001"],
+  "artifact_refs": ["conformance.summary.json"]
+}

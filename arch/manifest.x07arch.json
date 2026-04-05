@@ -1,8 +1,24 @@
 {
   "schema_version": "x07.arch.manifest@0.3.0",
   "repo": { "id": "hardproof", "root": "." },
-  "externals": { "allowed_import_prefixes": ["std.", "ext."], "allowed_exact": [] },
+  "externals": { "allowed_import_prefixes": ["std.", "ext.", "gen."], "allowed_exact": [] },
   "nodes": [
+    {
+      "id": "score_core",
+      "match": { "module_prefixes": [], "path_globs": ["score_core/src/**/*.x07.json"] },
+      "world": "solve-pure",
+      "trust_zone": "verified_core",
+      "visibility": { "mode": "public", "visible_to": [] },
+      "imports": { "deny_prefixes": ["std.os.", "ext."], "allow_prefixes": ["scan", "std."] }
+    },
+    {
+      "id": "score_core_tests",
+      "match": { "module_prefixes": [], "path_globs": ["score_core/tests/**/*.x07.json"] },
+      "world": "solve-pure",
+      "trust_zone": "test_only",
+      "visibility": { "mode": "restricted", "visible_to": [] },
+      "imports": { "deny_prefixes": ["std.os.", "ext."], "allow_prefixes": ["scan", "tests", "std."] }
+    },
     {
       "id": "cli_os",
       "match": { "module_prefixes": [], "path_globs": ["cli/src/**/*.x07.json"] },

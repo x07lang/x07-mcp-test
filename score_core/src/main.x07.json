@@ -1,0 +1,1 @@
+{"decls":[],"imports":["scan.score","std.codec"],"kind":"entry","module_id":"score_core_main","schema_version":"x07.x07ast@0.8.0","solve":["std.codec.write_u32_le",["scan.score.overall_score_n_or_neg1_v1",9000,100]]}

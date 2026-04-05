@@ -1,0 +1,10 @@
+{
+  "code": "USAGE-TOOL-DESC-OVERSIZE",
+  "dimension": "usage",
+  "severity": "warning",
+  "title": "Tool description too large",
+  "summary": "Tool `foo` description is too large for most clients.",
+  "evidence": { "tool": "foo", "estimated_tokens": 500 },
+  "suggested_fix": "Shorten tool descriptions and remove redundant examples.",
+  "docs_ref": "https://x07.io/docs/hardproof/findings/USAGE-TOOL-DESC-OVERSIZE"
+}

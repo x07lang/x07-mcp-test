@@ -14,7 +14,7 @@ test -s hardproof-scan/action.yml
 echo "==> fmt"
 while IFS= read -r path; do
   x07 fmt --input "${path}" --check --report-json >/dev/null
-done < <(find cli/src -name '*.x07.json' -print | LC_ALL=C sort)
+done < <(find cli/src score_core/src score_core/tests -name '*.x07.json' -print | LC_ALL=C sort)
 
 echo "==> pkg lock"
 x07 pkg lock --project x07.json --check --json=off >/dev/null
@@ -22,9 +22,84 @@ x07 pkg lock --project x07.json --check --json=off >/dev/null
 echo "==> arch check"
 x07 arch check --manifest arch/manifest.x07arch.json >/dev/null
 
+echo "==> score core: pkg lock"
+x07 pkg lock --project score_core/x07.json --check --json=off >/dev/null
+
+echo "==> score core: arch check"
+(cd score_core && x07 arch check --manifest arch/manifest.x07arch.json >/dev/null)
+
+echo "==> score core: trust profile check"
+x07 trust profile check \
+  --profile score_core/arch/trust/profiles/hardproof_score_core_pure_v1.json \
+  --project score_core/x07.json \
+  --entry scan.score.overall_score_n_or_neg1_v1 \
+  --json=off >/dev/null
+
+echo "==> score core: tests"
+x07 test --all --manifest score_core/tests/tests.json --json=off >/dev/null
+
+echo "==> score core: verify coverage"
+x07 verify \
+  --coverage \
+  --project score_core/x07.json \
+  --entry scan.score.overall_score_n_or_neg1_v1 \
+  --json=off >/dev/null
+
 mkdir -p out
 tmp_dir="$(mktemp -d "out/ci-tmp.XXXXXX")"
 trap 'rm -rf "${tmp_dir}"' EXIT
+
+echo "==> score core: trust certify"
+score_core_cert_dir="${tmp_dir}/score-core-cert"
+rm -rf "${score_core_cert_dir}"
+mkdir -p "${score_core_cert_dir}"
+x07 trust certify \
+  --project score_core/x07.json \
+  --profile score_core/arch/trust/profiles/hardproof_score_core_pure_v1.json \
+  --entry scan.score.overall_score_n_or_neg1_v1 \
+  --out-dir "${score_core_cert_dir}" \
+  --json=off >/dev/null
+
+score_core_cert="${score_core_cert_dir}/certificate.json"
+test -s "${score_core_cert}"
+score_core_proof="$(
+  python3 - "${score_core_cert}" "scan.score.overall_score_n_or_neg1_v1" <<'PY'
+import json
+import os
+import sys
+
+cert_path = sys.argv[1]
+symbol = sys.argv[2]
+
+with open(cert_path, "r", encoding="utf-8") as f:
+    cert = json.load(f)
+
+for entry in cert.get("proof_inventory", []):
+    if entry.get("symbol") != symbol:
+        continue
+    proof = entry.get("proof_object") or {}
+    proof_path = proof.get("path")
+    if not proof_path:
+        continue
+    if not os.path.isabs(proof_path):
+        proof_path = os.path.normpath(os.path.join(os.path.dirname(cert_path), proof_path))
+    print(proof_path)
+    raise SystemExit(0)
+
+raise SystemExit(1)
+PY
+)"
+test -s "${score_core_proof}"
+(cd score_core && x07 prove check --proof "${score_core_proof}" --json=off >/dev/null)
+
+echo "==> score core: trust report"
+score_core_trust_report="${tmp_dir}/score-core-trust-report.json"
+rm -f "${score_core_trust_report}"
+x07 trust report \
+  --project score_core/x07.json \
+  --out "${score_core_trust_report}" \
+  --json=off >/dev/null
+test -s "${score_core_trust_report}"
 
 bin_path="${tmp_dir}/hardproof"
 bundle_log="${tmp_dir}/bundle.log"
@@ -199,16 +274,20 @@ run_conformance_fixture() (
   fi
 
   "${bin_path}" ci validate-json \
-    --schema schemas/x07.mcp.conformance.summary.schema.json \
-    --input "${fixture_out_dir}/summary.json"
+    --schema schemas/x07.mcp.scan.report.schema.json \
+    --input "${fixture_out_dir}/scan.json"
 
-  test -s "${fixture_out_dir}/summary.junit.xml"
-  python3 scripts/ci/assert_junit_xml.py "${fixture_out_dir}/summary.junit.xml"
-  test -s "${fixture_out_dir}/summary.html"
-  test -s "${fixture_out_dir}/summary.sarif.json"
+  "${bin_path}" ci validate-json \
+    --schema schemas/x07.mcp.conformance.summary.schema.json \
+    --input "${fixture_out_dir}/conformance.summary.json"
+
+  test -s "${fixture_out_dir}/conformance.summary.junit.xml"
+  python3 scripts/ci/assert_junit_xml.py "${fixture_out_dir}/conformance.summary.junit.xml"
+  test -s "${fixture_out_dir}/conformance.summary.html"
+  test -s "${fixture_out_dir}/conformance.summary.sarif.json"
   "${bin_path}" ci validate-json \
     --schema schemas/x07.mcp.sarif.schema.json \
-    --input "${fixture_out_dir}/summary.sarif.json"
+    --input "${fixture_out_dir}/conformance.summary.sarif.json"
 
   if [[ "${fixture_id}" == "good-http" ]]; then
     echo "==> ci smoke (good-http)"
@@ -219,7 +298,7 @@ run_conformance_fixture() (
     set +e
     "${bin_path}" ci \
       --url "${fixture_url}" \
-      --threshold 80 \
+      --min-score 80 \
       --baseline conformance/pinned/conformance-baseline.yml \
       --out "${ci_out_dir}" \
       --machine json >"${ci_out_dir}/summary.stdout.json"
@@ -233,8 +312,8 @@ run_conformance_fixture() (
     fi
 
     "${bin_path}" ci validate-json \
-      --schema schemas/x07.mcp.conformance.summary.schema.json \
-      --input "${ci_out_dir}/summary.json"
+      --schema schemas/x07.mcp.scan.report.schema.json \
+      --input "${ci_out_dir}/scan.json"
   fi
 )
 
@@ -285,16 +364,20 @@ run_conformance_stdio_fixture() (
   fi
 
   "${bin_path}" ci validate-json \
-    --schema schemas/x07.mcp.conformance.summary.schema.json \
-    --input "${fixture_out_dir}/summary.json"
+    --schema schemas/x07.mcp.scan.report.schema.json \
+    --input "${fixture_out_dir}/scan.json"
 
-  test -s "${fixture_out_dir}/summary.junit.xml"
-  python3 scripts/ci/assert_junit_xml.py "${fixture_out_dir}/summary.junit.xml"
-  test -s "${fixture_out_dir}/summary.html"
-  test -s "${fixture_out_dir}/summary.sarif.json"
+  "${bin_path}" ci validate-json \
+    --schema schemas/x07.mcp.conformance.summary.schema.json \
+    --input "${fixture_out_dir}/conformance.summary.json"
+
+  test -s "${fixture_out_dir}/conformance.summary.junit.xml"
+  python3 scripts/ci/assert_junit_xml.py "${fixture_out_dir}/conformance.summary.junit.xml"
+  test -s "${fixture_out_dir}/conformance.summary.html"
+  test -s "${fixture_out_dir}/conformance.summary.sarif.json"
   "${bin_path}" ci validate-json \
     --schema schemas/x07.mcp.sarif.schema.json \
-    --input "${fixture_out_dir}/summary.sarif.json"
+    --input "${fixture_out_dir}/conformance.summary.sarif.json"
 )
 
 stdio_pids=()

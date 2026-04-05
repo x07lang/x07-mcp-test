@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://x07.io/schemas/x07.mcp.scan.dimension.schema.json",
+  "title": "x07.mcp.scan.dimension@0.3.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "name",
+    "status",
+    "score",
+    "weight",
+    "metrics",
+    "finding_refs",
+    "artifact_refs"
+  ],
+  "properties": {
+    "name": {
+      "type": "string",
+      "enum": ["conformance", "security", "performance", "trust", "reliability"]
+    },
+    "status": { "type": "string", "enum": ["pass", "warn", "fail", "unknown"] },
+    "score": { "type": ["integer", "null"], "minimum": 0, "maximum": 100 },
+    "weight": { "type": "number", "minimum": 0, "maximum": 1 },
+    "metrics": { "type": "object", "additionalProperties": true },
+    "finding_refs": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+    "artifact_refs": { "type": "array", "items": { "type": "string", "minLength": 1 } }
+  }
+}

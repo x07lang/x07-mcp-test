@@ -1,0 +1,16 @@
+{"run_id":"598fb0b197984a5e","transport":"streamable_http","type":"scan.started"}
+{"phase":"dimensions","run_id":"598fb0b197984a5e","type":"scan.phase.started"}
+{"dimension":"conformance","run_id":"598fb0b197984a5e","type":"scan.dimension.started"}
+{"dimension":"conformance","err_code":0,"run_id":"598fb0b197984a5e","type":"scan.dimension.finished"}
+{"dimension":"security","run_id":"598fb0b197984a5e","type":"scan.dimension.started"}
+{"dimension":"security","err_code":0,"run_id":"598fb0b197984a5e","type":"scan.dimension.finished"}
+{"dimension":"performance","run_id":"598fb0b197984a5e","type":"scan.dimension.started"}
+{"dimension":"performance","err_code":0,"run_id":"598fb0b197984a5e","type":"scan.dimension.finished"}
+{"dimension":"trust","run_id":"598fb0b197984a5e","type":"scan.dimension.started"}
+{"dimension":"trust","err_code":0,"run_id":"598fb0b197984a5e","type":"scan.dimension.finished"}
+{"dimension":"reliability","run_id":"598fb0b197984a5e","type":"scan.dimension.started"}
+{"dimension":"reliability","err_code":0,"run_id":"598fb0b197984a5e","type":"scan.dimension.finished"}
+{"dimension":"usage","run_id":"598fb0b197984a5e","type":"scan.dimension.started"}
+{"dimension":"usage","err_code":0,"run_id":"598fb0b197984a5e","type":"scan.dimension.finished"}
+{"ok":true,"phase":"dimensions","run_id":"598fb0b197984a5e","type":"scan.phase.finished"}
+{"overall_score":100,"report_path":"out/scan/scan.json","run_id":"598fb0b197984a5e","score_available":true,"status":"warn","type":"scan.finished"}

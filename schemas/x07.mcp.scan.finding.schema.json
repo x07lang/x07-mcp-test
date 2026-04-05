@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://x07.io/schemas/x07.mcp.scan.finding.schema.json",
+  "title": "x07.mcp.scan.finding@0.3.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "code",
+    "dimension",
+    "severity",
+    "title",
+    "summary",
+    "evidence",
+    "suggested_fix",
+    "docs_ref"
+  ],
+  "properties": {
+    "code": { "type": "string", "minLength": 1 },
+    "dimension": {
+      "type": "string",
+      "enum": ["conformance", "security", "performance", "trust", "reliability", "usage"]
+    },
+    "severity": { "type": "string", "enum": ["info", "warning", "critical"] },
+    "title": { "type": "string", "minLength": 1 },
+    "summary": { "type": "string", "minLength": 1 },
+    "evidence": { "type": "object", "additionalProperties": true },
+    "suggested_fix": { "type": "string", "minLength": 1 },
+    "docs_ref": { "type": "string", "minLength": 1 }
+  }
+}

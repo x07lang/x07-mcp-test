@@ -8,13 +8,13 @@ usage() {
 Install the Hardproof verifier binary from GitHub Releases.
 
 Usage:
-  install.sh --tag <v0.2.0-beta.N>
+  install.sh --tag <v0.3.0-beta.N>
   install.sh --tag latest-beta
   install.sh --tag <v0.1.0-alpha.N>
   install.sh --tag latest-alpha
 
 Options:
-  --tag <TAG>         Git tag to install from (example: v0.2.0-beta.1, latest-beta, v0.1.0-alpha.9, latest-alpha)
+  --tag <TAG>         Git tag to install from (example: v0.3.0-beta.0, latest-beta, v0.1.0-alpha.9, latest-alpha)
   --install-dir <DIR> Install directory (default: ~/.local/bin)
 
 Notes:
@@ -74,7 +74,7 @@ import json, re, sys
 data = json.loads(sys.argv[1])
 for r in data:
   t = r.get("tag_name","")
-  if re.match(r"^v0\.2\.\d+-beta\.\d+$", t):
+  if re.match(r"^v0\.3\.\d+-beta\.\d+$", t):
     print(t)
     sys.exit(0)
 print("", end="")
@@ -281,4 +281,4 @@ echo
 echo "Next:"
 echo "  hardproof --help"
 echo "  hardproof doctor"
-echo "  hardproof scan --url \"http://127.0.0.1:3000/mcp\" --out out/conformance --machine json"
+echo "  hardproof scan --url \"http://127.0.0.1:3000/mcp\" --out out/scan --machine json"

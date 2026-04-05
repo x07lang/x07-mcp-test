@@ -6,7 +6,7 @@ cd "${repo_root}"
 
 tag="${HARDPROOF_TAG:-${GITHUB_REF_NAME:-}}"
 if [[ -z "${tag}" ]]; then
-  echo "ERROR: missing release tag; set HARDPROOF_TAG (example: v0.2.0-beta.1)" >&2
+  echo "ERROR: missing release tag; set HARDPROOF_TAG (example: v0.3.0-beta.0)" >&2
   exit 2
 fi
 
@@ -69,7 +69,7 @@ Hardproof beta
 Next:
   ./hardproof --help
   ./hardproof doctor
-  ./hardproof scan --url "http://127.0.0.1:3000/mcp" --out out/conformance --machine json
+  ./hardproof scan --url "http://127.0.0.1:3000/mcp" --out out/scan --machine json
 TXT
 
 version="${tag#v}"

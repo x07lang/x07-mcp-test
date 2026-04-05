@@ -1,0 +1,7 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://x07.io/schemas/x07.mcp.scan.metrics.schema.json",
+  "title": "x07.mcp.scan.metrics@0.3.0",
+  "type": "object",
+  "additionalProperties": true
+}
